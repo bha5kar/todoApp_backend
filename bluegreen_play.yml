@@ -19,9 +19,26 @@
       systemd_service:
         name: docker
         state: started
+
+    - name: set current publicip
+      shell:
+        cmd: |
+          current_ip=$(curl ifconfig.me)
+          set_ip=$(sudo grep "server_name" app.conf|cut -d '' -f6|tr -d ";")
+          if [[ "$current_ip" = "$set_ip"]];then
+            echo "set ip is correct serving on $current_ip"
+          else 
+            sudo sed -i "s/$current_ip/$set_ip/g" app.conf
+            echo "set ip to current serving on $current_ip"
+          fi
+        args:
+          chdir: /etc/nginx/conf.decom
+          executable: /bin/bash
+
       
     - name: start nginx
       service:
         name: nginx
-        state: started
+        state: restarted
+
       
