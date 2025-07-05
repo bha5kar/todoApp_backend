@@ -8,6 +8,9 @@
 
   tasks:
 
+    - name: set timezone to IST
+      cmd: timedatectl set-timezone Asia/Kolkata
+
     - name: install pkgs
       yum:
         name: "{{item}}"
@@ -37,6 +40,11 @@
       args:
         chdir: /etc/nginx/conf.d
         executable: /bin/bash
+      register: ip_update
+
+    - name: show changes in ip setup
+      debug:
+        var: ip_update.stdout_lines
 
 
       
