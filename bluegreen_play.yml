@@ -8,9 +8,6 @@
 
   tasks:
 
-    - name: set timezone to IST
-      cmd: timedatectl set-timezone Asia/Kolkata
-
     - name: install pkgs
       yum:
         name: "{{item}}"
@@ -25,6 +22,7 @@
 
     - name: set current publicip
       shell: |
+        timedatectl set-timezone Asia/Kolkata
         current_ip=$(curl -s ifconfig.me)
         set_ip=$(sudo grep "server_name" app.conf | cut -d' ' -f6 | tr -d "; \n")
     
