@@ -23,16 +23,21 @@
     - name: set current publicip
       shell: |
         current_ip=$(curl -s ifconfig.me)
-        set_ip=$(sudo grep "server_name" app.conf|cut -d '' -f6|tr -d ";")
-        if [[ "$current_ip" = "$set_ip" ]];then
-          echo "set ip is correct serving on $current_ip"
+        set_ip=$(sudo grep "server_name" app.conf | cut -d' ' -f6 | tr -d "; \n")
+    
+        echo "Current IP: '$current_ip'"
+        echo "Set IP: '$set_ip'"
+
+        if [[ "$current_ip" = "$set_ip" ]]; then
+          echo "Set IP is correct; serving on $current_ip"
         else 
           sudo sed -i "s/$set_ip/$current_ip/g" app.conf
-          echo "set ip to current serving on $current_ip"
+          echo "Set IP updated; now serving on $current_ip"
         fi
       args:
-          chdir: /etc/nginx/conf.d
-          executable: /bin/bash
+        chdir: /etc/nginx/conf.d
+        executable: /bin/bash
+
 
       
     - name: start nginx
